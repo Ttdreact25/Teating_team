@@ -243,6 +243,30 @@ a {
   margin: 0 auto;
 }
 
+.success-content {
+  text-align: center;
+}
+
+.success-icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 24px;
+  place-items: center;
+  border-radius: 50%;
+  color: #355a3b;
+  background: #edf3e8;
+}
+
+.success-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.success-content .form-subtitle {
+  overflow-wrap: anywhere;
+}
+
 .mobile-brand {
   display: none;
   margin-bottom: 48px;
@@ -415,6 +439,12 @@ a {
   background: #1d3024;
 }
 
+.submit-button:disabled {
+  transform: none;
+  background: #718071;
+  cursor: wait;
+}
+
 .submit-button:focus-visible,
 .visibility-button:focus-visible,
 a:focus-visible,
@@ -445,6 +475,40 @@ a:focus-visible,
 
 .signup-prompt a {
   margin-left: 3px;
+}
+
+.inline-link {
+  margin-left: 3px;
+  padding: 0;
+  border: 0;
+  color: #536b50;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.inline-link:hover {
+  color: #344b37;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.inline-link:focus-visible {
+  outline: 3px solid rgba(111, 136, 104, 0.45);
+  outline-offset: 3px;
+}
+
+.register-form-wrap .form-subtitle {
+  margin-bottom: 24px;
+}
+
+.register-form-wrap .input-wrap {
+  margin-bottom: 15px;
+}
+
+.terms-option {
+  margin: 3px 0 17px;
 }
 
 .legal-note {

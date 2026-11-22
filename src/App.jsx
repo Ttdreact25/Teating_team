@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Register from './Register.jsx';
 
 function BrandMark() {
   return (
@@ -41,10 +42,51 @@ function EyeIcon({ visible }) {
 function App() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [notice, setNotice] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [signedInUser, setSignedInUser] = useState(null);
+  const [view, setView] = useState('sign-in');
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setNotice('Your sign-in form is ready to connect to an authentication service.');
+    const formData = new FormData(event.currentTarget);
+    setNotice('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.get('email'),
+          password: formData.get('password'),
+        }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        setNotice(
+          typeof result.error === 'string'
+            ? result.error
+            : 'Sign-in failed. Please check your credentials and try again.',
+        );
+        return;
+      }
+
+      if (typeof result.user?.fullName !== 'string' || typeof result.user?.email !== 'string') {
+        setNotice('The server returned an invalid sign-in response. Please try again.');
+        return;
+      }
+
+      setSignedInUser(result.user);
+    } catch (error) {
+      setNotice(
+        error instanceof TypeError
+          ? 'Unable to reach the sign-in server. Please try again.'
+          : 'The server returned an invalid response. Please try again.',
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -91,6 +133,47 @@ function App() {
         <div className="panel-orbit orbit-two" aria-hidden="true" />
       </section>
 
+      {signedInUser ? (
+        <section className="form-panel" aria-labelledby="success-heading">
+          <div className="form-wrap success-content">
+            <div className="success-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="m5 12.5 4.5 4.5L19 7"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <div className="form-heading">
+              <p className="form-kicker">SIGN-IN SUCCESSFUL</p>
+              <h2 id="success-heading">Welcome, {signedInUser.fullName}!</h2>
+              <p className="form-subtitle">
+                You’re signed in as {signedInUser.email}.
+              </p>
+            </div>
+            <button
+              className="submit-button"
+              onClick={() => {
+                setSignedInUser(null);
+                setNotice('');
+                setView('sign-in');
+              }}
+              type="button"
+            >
+              Sign out
+            </button>
+          </div>
+          <span className="copyright">© 2025 Northstar, Inc.</span>
+        </section>
+      ) : view === 'register' ? (
+        <section className="form-panel" aria-labelledby="register-heading">
+          <Register onSwitchToSignIn={() => setView('sign-in')} />
+          <span className="copyright">© 2025 Northstar, Inc.</span>
+        </section>
+      ) : (
       <section className="form-panel" aria-labelledby="welcome-heading">
         <div className="form-wrap">
           <div className="mobile-brand">
@@ -191,8 +274,8 @@ function App() {
               </label>
             </div>
 
-            <button className="submit-button" type="submit">
-              Sign in
+            <button className="submit-button" disabled={isSubmitting} type="submit">
+              {isSubmitting ? 'Signing in…' : 'Sign in'}
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path
                   d="M4 10h12m-5-5 5 5-5 5"
@@ -203,13 +286,13 @@ function App() {
                 />
               </svg>
             </button>
-            <p aria-live="polite" className="form-notice">
+            <p aria-live="polite" className="form-notice" role={notice ? 'alert' : undefined}>
               {notice}
             </p>
           </form>
 
           <p className="signup-prompt">
-            New to Northstar? <a href="mailto:hello@northstar.example">Create an account</a>
+            New to Northstar? <button className="inline-link" onClick={() => setView('register')} type="button">Create an account</button>
           </p>
           <p className="legal-note">
             By continuing, you agree to our <a href="#terms">Terms</a> and{' '}
@@ -218,6 +301,7 @@ function App() {
         </div>
         <span className="copyright">© 2025 Northstar, Inc.</span>
       </section>
+      )}
     </main>
   );
 }
