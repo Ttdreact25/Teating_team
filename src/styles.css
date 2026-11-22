@@ -447,6 +447,40 @@ a:focus-visible,
   margin-left: 3px;
 }
 
+.inline-link {
+  margin-left: 3px;
+  padding: 0;
+  border: 0;
+  color: #536b50;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.inline-link:hover {
+  color: #344b37;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.inline-link:focus-visible {
+  outline: 3px solid rgba(111, 136, 104, 0.45);
+  outline-offset: 3px;
+}
+
+.register-form-wrap .form-subtitle {
+  margin-bottom: 24px;
+}
+
+.register-form-wrap .input-wrap {
+  margin-bottom: 15px;
+}
+
+.terms-option {
+  margin: 3px 0 17px;
+}
+
 .legal-note {
   margin: 46px 0 0;
   color: #a0a49d;
