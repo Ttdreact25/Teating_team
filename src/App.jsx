@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Register from './Register.jsx';
+import { authRequest } from './authApi.js';
 
 function BrandMark() {
   return (
@@ -41,12 +42,27 @@ function EyeIcon({ visible }) {
 
 function App() {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [notice, setNotice] = useState('');
+  const [notice, setNotice] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [view, setView] = useState('sign-in');
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setNotice('Your sign-in form is ready to connect to an authentication service.');
+    setNotice(null);
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.currentTarget);
+    try {
+      const result = await authRequest('login', {
+        email: formData.get('email'),
+        password: formData.get('password'),
+      });
+      setNotice({ type: 'success', text: `Login successful. Welcome, ${result.user.fullName}!` });
+    } catch (error) {
+      setNotice({ type: 'error', text: error.message });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -199,8 +215,8 @@ function App() {
               </label>
             </div>
 
-            <button className="submit-button" type="submit">
-              Sign in
+            <button className="submit-button" disabled={isSubmitting} type="submit">
+              {isSubmitting ? 'Signing in…' : 'Sign in'}
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path
                   d="M4 10h12m-5-5 5 5-5 5"
@@ -211,8 +227,8 @@ function App() {
                 />
               </svg>
             </button>
-            <p aria-live="polite" className="form-notice">
-              {notice}
+            <p aria-live="polite" className={`form-notice ${notice?.type ?? ''}`}>
+              {notice?.text}
             </p>
           </form>
 

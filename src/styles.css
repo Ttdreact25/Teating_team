@@ -415,6 +415,12 @@ a {
   background: #1d3024;
 }
 
+.submit-button:disabled {
+  transform: none;
+  cursor: wait;
+  opacity: 0.75;
+}
+
 .submit-button:focus-visible,
 .visibility-button:focus-visible,
 a:focus-visible,
@@ -434,6 +440,10 @@ a:focus-visible,
   color: #536b50;
   font-size: 11px;
   line-height: 1.5;
+}
+
+.form-notice.error {
+  color: #a33e36;
 }
 
 .signup-prompt {

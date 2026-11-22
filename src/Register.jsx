@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { authRequest } from './authApi.js';
 
 function EyeIcon({ visible }) {
   return visible ? (
@@ -27,21 +28,35 @@ function EyeIcon({ visible }) {
 function Register({ onSwitchToSignIn }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [notice, setNotice] = useState('');
+  const [notice, setNotice] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function submitRegistration(event) {
+  async function submitRegistration(event) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
 
     if (password !== confirmPassword) {
-      setNotice('Passwords do not match.');
+      setNotice({ type: 'error', text: 'Passwords do not match.' });
       event.currentTarget.elements.confirmPassword.focus();
       return;
     }
 
-    setNotice('Your account is ready to connect to an authentication service.');
+    setNotice(null);
+    setIsSubmitting(true);
+    try {
+      const result = await authRequest('register', {
+        fullName: form.get('fullName'),
+        email: form.get('email'),
+        password,
+      });
+      setNotice({ type: 'success', text: `${result.message} You can now sign in.` });
+    } catch (error) {
+      setNotice({ type: 'error', text: error.message });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -115,13 +130,13 @@ function Register({ onSwitchToSignIn }) {
           <span>I agree to the Terms and Privacy Policy</span>
         </label>
 
-        <button className="submit-button" type="submit">
-          Create account
+        <button className="submit-button" disabled={isSubmitting} type="submit">
+          {isSubmitting ? 'Creating account…' : 'Create account'}
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <p aria-live="polite" className="form-notice">{notice}</p>
+        <p aria-live="polite" className={`form-notice ${notice?.type ?? ''}`}>{notice?.text}</p>
       </form>
 
       <p className="signup-prompt">
