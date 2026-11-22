@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Register from './Register.jsx';
 
 function BrandMark() {
   return (
@@ -41,6 +42,7 @@ function EyeIcon({ visible }) {
 function App() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [notice, setNotice] = useState('');
+  const [view, setView] = useState('sign-in');
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -91,6 +93,12 @@ function App() {
         <div className="panel-orbit orbit-two" aria-hidden="true" />
       </section>
 
+      {view === 'register' ? (
+        <section className="form-panel" aria-labelledby="register-heading">
+          <Register onSwitchToSignIn={() => setView('sign-in')} />
+          <span className="copyright">© 2025 Northstar, Inc.</span>
+        </section>
+      ) : (
       <section className="form-panel" aria-labelledby="welcome-heading">
         <div className="form-wrap">
           <div className="mobile-brand">
@@ -209,7 +217,7 @@ function App() {
           </form>
 
           <p className="signup-prompt">
-            New to Northstar? <a href="mailto:hello@northstar.example">Create an account</a>
+            New to Northstar? <button className="inline-link" onClick={() => setView('register')} type="button">Create an account</button>
           </p>
           <p className="legal-note">
             By continuing, you agree to our <a href="#terms">Terms</a> and{' '}
@@ -218,6 +226,7 @@ function App() {
         </div>
         <span className="copyright">© 2025 Northstar, Inc.</span>
       </section>
+      )}
     </main>
   );
 }
