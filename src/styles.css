@@ -243,6 +243,30 @@ a {
   margin: 0 auto;
 }
 
+.success-content {
+  text-align: center;
+}
+
+.success-icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 24px;
+  place-items: center;
+  border-radius: 50%;
+  color: #355a3b;
+  background: #edf3e8;
+}
+
+.success-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.success-content .form-subtitle {
+  overflow-wrap: anywhere;
+}
+
 .mobile-brand {
   display: none;
   margin-bottom: 48px;
@@ -413,6 +437,12 @@ a {
 .submit-button:hover {
   transform: translateY(-1px);
   background: #1d3024;
+}
+
+.submit-button:disabled {
+  transform: none;
+  background: #718071;
+  cursor: wait;
 }
 
 .submit-button:focus-visible,
